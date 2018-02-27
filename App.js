@@ -1,8 +1,7 @@
-// @flow
 import React from "react";
-import { StyleSheet, Image, View } from "react-native";
+import { StyleSheet, Image, View, StatusBar } from "react-native";
 
-import Closet from "./src/closet";
+import Closet from "./src/Closet";
 
 const IMAGE_LAYERS = [
     "https://impress-asset-images.s3.amazonaws.com/object/000/000/006/6829/600x600.png?0", // background
@@ -21,12 +20,47 @@ const IMAGE_LAYERS = [
 
 const ITEMS = [
     {
-        key: 1,
+        id: 1,
         name: "Moon and Stars Background",
         petPreviewLayerUrl:
             "https://impress-asset-images.s3.amazonaws.com/object/000/000/006/6829/600x600.png?0",
         thumbnailUrl: "http://images.neopets.com/items/bg_moonstars.gif",
-        zone: 1,
+        zone: { depth: 1, name: "Background" },
+    },
+    {
+        id: 2,
+        name: "Green Leaf String Lights",
+        petPreviewLayerUrl:
+            "https://impress-asset-images.s3.amazonaws.com/object/000/000/036/36414/600x600.png?0",
+        thumbnailUrl:
+            "http://images.neopets.com/items/toy_stringlight_illleaf.gif",
+        zone: { depth: 2, name: "Background Item" },
+    },
+    {
+        id: 3,
+        name: "Zafara Agent Robe",
+        petPreviewLayerUrl:
+            "https://impress-asset-images.s3.amazonaws.com/object/000/000/014/14856/600x600.png?0",
+        thumbnailUrl:
+            "http://images.neopets.com/items/clo_zafara_agent_robe.gif",
+        zone: { depth: 8, name: "Jacket" },
+    },
+    {
+        id: 4,
+        name: "Zafara Agent Hood",
+        petPreviewLayerUrl:
+            "https://impress-asset-images.s3.amazonaws.com/object/000/000/014/14857/600x600.png?0",
+        thumbnailUrl:
+            "http://images.neopets.com/items/clo_zafara_agent_hood.gif",
+        zone: { depth: 9, name: "Hat" },
+    },
+    {
+        id: 5,
+        name: "Jewelled Staff",
+        petPreviewLayerUrl:
+            "https://impress-asset-images.s3.amazonaws.com/object/000/000/039/39646/600x600.png?0",
+        thumbnailUrl: "http://images.neopets.com/items/mall_staff_jewelled.gif",
+        zone: { depth: 10, name: "Left-hand Item" },
     },
 ];
 
@@ -45,7 +79,7 @@ export default class App extends React.Component {
                     ))}
                 </View>
                 <View style={styles.closet}>
-                    <Closet />
+                    <Closet items={ITEMS} />
                 </View>
             </View>
         );
@@ -54,9 +88,10 @@ export default class App extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
+        backgroundColor: "#212121",
         flex: 1,
-        backgroundColor: "#fff",
         alignItems: "stretch",
+        paddingTop: StatusBar.currentHeight,
     },
 
     petPreview: {
@@ -72,6 +107,6 @@ const styles = StyleSheet.create({
     },
 
     closet: {
-        borderTopWidth: 1,
+        backgroundColor: "white",
     },
 });
