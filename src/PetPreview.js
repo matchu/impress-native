@@ -1,16 +1,28 @@
 import React from "react";
 import { StyleSheet, Image, View } from "react-native";
 
-import { IMAGE_LAYERS } from "./hardcoded-data";
+import { IMAGE_LAYERS, BIOLOGY_ASSETS } from "./hardcoded-data";
 
 export default class PetPreview extends React.PureComponent {
     render() {
+        const itemAssets = this.props.items.map(item => item.asset);
+        const assets = [...itemAssets, ...BIOLOGY_ASSETS];
+        assets.sort((a, b) => {
+            if (a.zone.depth < b.zone.depth) {
+                return -1;
+            } else if (a.zone.depth > b.zone.depth) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+
         return (
             <View style={styles.petPreview}>
-                {IMAGE_LAYERS.map(uri => (
+                {assets.map(asset => (
                     <Image
-                        key={uri}
-                        source={{ uri }}
+                        key={asset.url}
+                        source={{ uri: asset.url }}
                         style={styles.petPreviewLayer}
                         resizeMode={Image.resizeMode.contain}
                     />

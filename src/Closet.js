@@ -50,7 +50,7 @@ export default class Closet extends React.PureComponent {
                                     {item.name}
                                 </Text>
                                 <Text style={styles.itemInfo}>
-                                    {item.zone.name}
+                                    {item.asset.zone.name}
                                 </Text>
                             </View>
                         </View>
