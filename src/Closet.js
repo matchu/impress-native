@@ -1,17 +1,43 @@
 import React from "react";
-import { StyleSheet, FlatList, Image, Text, View } from "react-native";
+import {
+    StyleSheet,
+    FlatList,
+    Image,
+    Text,
+    ToolbarAndroid,
+    View,
+} from "react-native";
 import { material, materialColors } from "react-native-typography";
 
 export default class Closet extends React.PureComponent {
     render() {
+        const sortedItems = [...this.props.items].sort((a, b) => {
+            if (a.name < b.name) {
+                return -1;
+            } else if (a.name > b.name) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+
         return (
             <View style={styles.closet}>
-                <View style={styles.header}>
-                    <Text style={material.headline}>Your outfit</Text>
-                </View>
+                <ToolbarAndroid
+                    title="Your outfit"
+                    style={styles.toolbar}
+                    titleColor="white"
+                    actions={[
+                        {
+                            title: "Search items",
+                            icon: require("../icons/search/search.png"),
+                            show: "ifRoom",
+                        },
+                    ]}
+                />
                 <FlatList
                     style={styles.itemList}
-                    data={this.props.items}
+                    data={sortedItems}
                     keyExtractor={item => item.id}
                     renderItem={({ item }) => (
                         <View style={styles.itemRow}>
@@ -42,17 +68,21 @@ function ItemRowDivider() {
 
 const styles = StyleSheet.create({
     closet: {
+        width: "100%",
+        height: "100%",
+    },
+
+    toolbar: {
+        backgroundColor: "#388E3C",
+        height: 56,
+        elevation: 2,
+        marginBottom: 8,
+    },
+
+    itemList: {
+        flex: 1,
         paddingBottom: 16,
     },
-
-    header: {
-        paddingLeft: 16,
-        paddingRight: 16,
-        paddingTop: 16,
-        paddingBottom: 12,
-    },
-
-    itemList: {},
 
     itemRow: {
         flexDirection: "row",
