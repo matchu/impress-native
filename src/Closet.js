@@ -11,7 +11,11 @@ import { material, materialColors } from "react-native-typography";
 
 export default class Closet extends React.PureComponent {
     render() {
-        const sortedItems = [...this.props.items].sort((a, b) => {
+        const { data } = this.props;
+
+        const items = data.items || [];
+
+        const sortedItems = [...items].sort((a, b) => {
             if (a.name < b.name) {
                 return -1;
             } else if (a.name > b.name) {
@@ -49,9 +53,11 @@ export default class Closet extends React.PureComponent {
                                 <Text style={material.subheading}>
                                     {item.name}
                                 </Text>
-                                <Text style={styles.itemInfo}>
-                                    {item.asset.zone.name}
-                                </Text>
+                                {item.swfAssets.length && (
+                                    <Text style={styles.itemInfo}>
+                                        {item.swfAssets[0].zone.label}
+                                    </Text>
+                                )}
                             </View>
                         </View>
                     )}

@@ -1,43 +1,22 @@
 import React from "react";
-import { StyleSheet, Image, StatusBar, View } from "react-native";
+import { ApolloClient } from "apollo-client";
+import { ApolloProvider } from "react-apollo";
+import { HttpLink } from "apollo-link-http";
+import { InMemoryCache } from "apollo-cache-inmemory";
 
-import { ITEMS, ITEMS_BY_ID } from "./src/hardcoded-data";
-import Closet from "./src/Closet";
-import PetPreview from "./src/PetPreview";
+import Wardrobe from "./src/Wardrobe";
+
+const client = new ApolloClient({
+    link: new HttpLink({ uri: "http://192.168.1.249/graphql" }),
+    cache: new InMemoryCache(),
+});
 
 export default class App extends React.Component {
-    state = { wornItemIds: ITEMS.map(item => item.id) };
-
     render() {
-        const wornItems = this.state.wornItemIds.map(id => ITEMS_BY_ID[id]);
-
         return (
-            <View style={styles.container}>
-                <View style={styles.petPreview}>
-                    <PetPreview items={wornItems} />
-                </View>
-                <View style={styles.closet}>
-                    <Closet items={ITEMS} />
-                </View>
-            </View>
+            <ApolloProvider client={client}>
+                <Wardrobe />
+            </ApolloProvider>
         );
     }
 }
-
-const styles = StyleSheet.create({
-    container: {
-        backgroundColor: "#212121",
-        flex: 1,
-        alignItems: "stretch",
-        paddingTop: StatusBar.currentHeight,
-    },
-
-    petPreview: {
-        height: 300,
-    },
-
-    closet: {
-        backgroundColor: "white",
-        flex: 1,
-    },
-});
