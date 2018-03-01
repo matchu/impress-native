@@ -3,37 +3,21 @@ import {
     StyleSheet,
     FlatList,
     Image,
-    Text,
-    TextInput,
     ToolbarAndroid,
     TouchableNativeFeedback,
     View,
+    Text,
 } from "react-native";
 import { material, materialColors } from "react-native-typography";
 
-export default class Closet extends React.PureComponent {
-    state = { tab: "main" };
+import {
+    CONTAINER_PADDING,
+    THUMBNAIL_SIZE,
+    THUMBNAIL_RIGHT_MARGIN,
+    TEXT_STARTS_AT,
+} from "./util";
 
-    _goToSearch = () => {
-        this.setState({ tab: "search" });
-    };
-
-    _goToMain = () => {
-        this.setState({ tab: "main" });
-    };
-
-    render() {
-        if (this.state.tab === "main") {
-            return <ClosetMain {...this.props} onSearch={this._goToSearch} />;
-        } else if (this.state.tab === "search") {
-            return <ClosetSearch {...this.props} onExit={this._goToMain} />;
-        } else {
-            throw new Error(`unexpected tab ${this.state.tab}`);
-        }
-    }
-}
-
-class ClosetMain extends React.PureComponent {
+export default class ClosetMain extends React.PureComponent {
     _handleSearch = () => {
         this.props.onSearch();
     };
@@ -97,7 +81,7 @@ class ClosetMain extends React.PureComponent {
         });
 
         return (
-            <View style={styles.closet}>
+            <View style={styles.closetMain}>
                 <ToolbarAndroid
                     title="Your outfit"
                     style={[styles.toolbar]}
@@ -105,7 +89,7 @@ class ClosetMain extends React.PureComponent {
                     actions={[
                         {
                             title: "Search items",
-                            icon: require("../icons/search/search.png"),
+                            icon: require("../../icons/search/search.png"),
                             show: "ifRoom",
                         },
                     ]}
@@ -127,45 +111,8 @@ function ItemRowDivider() {
     return <View style={styles.itemRowDivider} />;
 }
 
-class ClosetSearch extends React.PureComponent {
-    _handleExit = () => {
-        this.props.onExit();
-    };
-
-    render() {
-        return (
-            <View style={styles.closet}>
-                <ToolbarAndroid style={[styles.toolbar, styles.toolbarSearch]}>
-                    <View style={styles.searchToolbarContent}>
-                        <TouchableNativeFeedback onPress={this._handleExit}>
-                            <Image
-                                source={require("../icons/back/back.png")}
-                                // TODO: This is an 18dp icon in assets :x
-                                style={{ height: 24, width: 24, opacity: 0.5 }}
-                            />
-                        </TouchableNativeFeedback>
-                        <TextInput
-                            style={[material.subheading, styles.searchField]}
-                            autoFocus
-                            placeholder="Search items"
-                            returnKeyType="search"
-                            underlineColorAndroid="transparent"
-                        />
-                    </View>
-                </ToolbarAndroid>
-            </View>
-        );
-    }
-}
-
-const CONTAINER_PADDING = 16;
-const THUMBNAIL_SIZE = 48;
-const THUMBNAIL_RIGHT_MARGIN = 16;
-const TEXT_STARTS_AT =
-    CONTAINER_PADDING + THUMBNAIL_SIZE + THUMBNAIL_RIGHT_MARGIN;
-
 const styles = StyleSheet.create({
-    closet: {
+    closetMain: {
         width: "100%",
         height: "100%",
     },
@@ -175,10 +122,6 @@ const styles = StyleSheet.create({
         height: 56,
         elevation: 2,
         marginBottom: 8,
-    },
-
-    toolbarSearch: {
-        backgroundColor: "white",
     },
 
     itemList: {
@@ -219,23 +162,5 @@ const styles = StyleSheet.create({
         height: THUMBNAIL_SIZE,
         width: THUMBNAIL_SIZE,
         marginRight: THUMBNAIL_RIGHT_MARGIN,
-    },
-
-    searchToolbarContent: {
-        // HACK: The view doesn't take up the full space unless it has a
-        //       background?
-        backgroundColor: "white",
-        flexDirection: "row",
-        alignItems: "center",
-        flex: 1,
-
-        // The first 16 is an overflow hack. The second 16 is desired spacing,
-        // to match the effective 16 left-margin already provided.
-        paddingRight: 16 + 16,
-    },
-
-    searchField: {
-        marginLeft: TEXT_STARTS_AT - 24 - CONTAINER_PADDING, // back icon, extra padding
-        flex: 1,
     },
 });

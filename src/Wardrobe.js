@@ -4,7 +4,7 @@ import { graphql } from "react-apollo";
 import gql from "graphql-tag";
 
 import { DEFAULT_ITEM_IDS, BODY_ID } from "./hardcoded-data";
-import Closet from "./Closet";
+import Closet from "./closet/Closet";
 import PetPreview from "./PetPreview";
 
 class Wardrobe extends React.PureComponent {
