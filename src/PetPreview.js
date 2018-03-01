@@ -5,7 +5,8 @@ import { BIOLOGY_ASSETS } from "./hardcoded-data";
 
 export default class PetPreview extends React.PureComponent {
     render() {
-        const { data } = this.props;
+        const { data, wornItemIds } = this.props;
+
         if (data.loading) {
             return (
                 <View style={[styles.petPreview, styles.loading]}>
@@ -18,7 +19,9 @@ export default class PetPreview extends React.PureComponent {
 
         const assets = [...BIOLOGY_ASSETS];
         for (const item of items) {
-            assets.push(...item.swfAssets);
+            if (wornItemIds.includes(item.id)) {
+                assets.push(...item.swfAssets);
+            }
         }
         assets.sort((a, b) => {
             if (a.zone.depth < b.zone.depth) {

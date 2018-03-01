@@ -5,11 +5,55 @@ import {
     Image,
     Text,
     ToolbarAndroid,
+    TouchableNativeFeedback,
     View,
 } from "react-native";
 import { material, materialColors } from "react-native-typography";
 
 export default class Closet extends React.PureComponent {
+    _toggleItem(item) {
+        if (this.props.wornItemIds.includes(item.id)) {
+            this.props.unwearItem(item);
+        } else {
+            this.props.wearItem(item);
+        }
+    }
+
+    _renderItemRow = ({ item }) => {
+        const isWorn = this.props.wornItemIds.includes(item.id);
+
+        return (
+            <TouchableNativeFeedback onPress={() => this._toggleItem(item)}>
+                <View style={styles.itemRow}>
+                    <Image
+                        source={{ uri: item.thumbnailUrl }}
+                        style={styles.thumbnail}
+                    />
+                    <View>
+                        <Text
+                            style={[
+                                material.subheading,
+                                !isWorn && styles.unwornItemName,
+                            ]}
+                        >
+                            {item.name}
+                        </Text>
+                        {item.swfAssets.length && (
+                            <Text
+                                style={[
+                                    styles.itemInfo,
+                                    !isWorn && styles.unwornItemInfo,
+                                ]}
+                            >
+                                {item.swfAssets[0].zone.label}
+                            </Text>
+                        )}
+                    </View>
+                </View>
+            </TouchableNativeFeedback>
+        );
+    };
+
     render() {
         const { data } = this.props;
 
@@ -43,24 +87,7 @@ export default class Closet extends React.PureComponent {
                     style={styles.itemList}
                     data={sortedItems}
                     keyExtractor={item => item.id}
-                    renderItem={({ item }) => (
-                        <View style={styles.itemRow}>
-                            <Image
-                                source={{ uri: item.thumbnailUrl }}
-                                style={styles.thumbnail}
-                            />
-                            <View>
-                                <Text style={material.subheading}>
-                                    {item.name}
-                                </Text>
-                                {item.swfAssets.length && (
-                                    <Text style={styles.itemInfo}>
-                                        {item.swfAssets[0].zone.label}
-                                    </Text>
-                                )}
-                            </View>
-                        </View>
-                    )}
+                    renderItem={this._renderItemRow}
                     ItemSeparatorComponent={ItemRowDivider}
                 />
             </View>
@@ -101,6 +128,16 @@ const styles = StyleSheet.create({
     itemInfo: {
         ...material.body1Object,
         color: materialColors.blackSecondary,
+    },
+
+    unwornItemName: {
+        color: materialColors.blackTertiary,
+        textDecorationLine: "line-through",
+    },
+
+    unwornItemInfo: {
+        color: materialColors.blackTertiary,
+        textDecorationLine: "line-through",
     },
 
     itemRowDivider: {

@@ -1,12 +1,12 @@
 export const DEFAULT_ITEM_IDS = [
-    48313, // Altador Cup Brooch
-    43014, // Green Leaf String Lights
-    43397, // Jewelled Staff
-    37229, // Magic Ball Table
-    37375, // Moon and Stars Background
-    38913, // Zafara Agent Gloves
-    38911, // Zafara Agent Hood
-    38912, // Zafara Agent Robe
+    "48313", // Altador Cup Brooch
+    "43014", // Green Leaf String Lights
+    "43397", // Jewelled Staff
+    "37229", // Magic Ball Table
+    "37375", // Moon and Stars Background
+    "38913", // Zafara Agent Gloves
+    "38911", // Zafara Agent Hood
+    "38912", // Zafara Agent Robe
 ];
 
 export const BIOLOGY_ASSETS = [

@@ -8,14 +8,38 @@ import Closet from "./Closet";
 import PetPreview from "./PetPreview";
 
 class Wardrobe extends React.PureComponent {
+    state = { wornItemIds: DEFAULT_ITEM_IDS };
+
+    _handleWearItem = item => {
+        this.setState(({ wornItemIds }) => ({
+            wornItemIds: wornItemIds.concat([item.id]),
+        }));
+    };
+
+    _handleUnwearItem = item => {
+        this.setState(({ wornItemIds }) => ({
+            wornItemIds: wornItemIds.filter(id => id !== item.id),
+        }));
+    };
+
     render() {
+        const { wornItemIds } = this.state;
+
         return (
             <View style={styles.container}>
                 <View style={styles.petPreview}>
-                    <PetPreview data={this.props.data} />
+                    <PetPreview
+                        data={this.props.data}
+                        wornItemIds={wornItemIds}
+                    />
                 </View>
                 <View style={styles.closet}>
-                    <Closet data={this.props.data} />
+                    <Closet
+                        data={this.props.data}
+                        wornItemIds={wornItemIds}
+                        wearItem={this._handleWearItem}
+                        unwearItem={this._handleUnwearItem}
+                    />
                 </View>
             </View>
         );
