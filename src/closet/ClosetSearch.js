@@ -93,8 +93,11 @@ const ItemsForClosetSearch = gql`
             thumbnailUrl
 
             swfAssets(bodyId: $bodyId) {
+                id
+                largeImageUrl
                 zone {
                     label
+                    depth
                 }
             }
         }
