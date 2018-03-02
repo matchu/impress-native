@@ -35,6 +35,7 @@ class Wardrobe extends React.PureComponent {
                 </View>
                 <View style={styles.closet}>
                     <Closet
+                        bodyId={BODY_ID}
                         data={this.props.data}
                         wornItemIds={wornItemIds}
                         wearItem={this._handleWearItem}

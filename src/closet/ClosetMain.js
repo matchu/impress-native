@@ -8,61 +8,24 @@ import {
     View,
     Text,
 } from "react-native";
-import { material, materialColors } from "react-native-typography";
 
-import {
-    CONTAINER_PADDING,
-    THUMBNAIL_SIZE,
-    THUMBNAIL_RIGHT_MARGIN,
-    TEXT_STARTS_AT,
-} from "./util";
+import ItemList from "./ItemList";
 
 export default class ClosetMain extends React.PureComponent {
     _handleSearch = () => {
         this.props.onSearch();
     };
 
-    _toggleItem(item) {
+    _shouldCrossOutItem = item => {
+        return !this.props.wornItemIds.includes(item.id);
+    };
+
+    _toggleItem = item => {
         if (this.props.wornItemIds.includes(item.id)) {
             this.props.unwearItem(item);
         } else {
             this.props.wearItem(item);
         }
-    }
-
-    _renderItemRow = ({ item }) => {
-        const isWorn = this.props.wornItemIds.includes(item.id);
-
-        return (
-            <TouchableNativeFeedback onPress={() => this._toggleItem(item)}>
-                <View style={styles.itemRow}>
-                    <Image
-                        source={{ uri: item.thumbnailUrl }}
-                        style={styles.thumbnail}
-                    />
-                    <View>
-                        <Text
-                            style={[
-                                material.subheading,
-                                !isWorn && styles.unwornItemName,
-                            ]}
-                        >
-                            {item.name}
-                        </Text>
-                        {item.swfAssets.length && (
-                            <Text
-                                style={[
-                                    styles.itemInfo,
-                                    !isWorn && styles.unwornItemInfo,
-                                ]}
-                            >
-                                {item.swfAssets[0].zone.label}
-                            </Text>
-                        )}
-                    </View>
-                </View>
-            </TouchableNativeFeedback>
-        );
     };
 
     render() {
@@ -95,20 +58,16 @@ export default class ClosetMain extends React.PureComponent {
                     ]}
                     onActionSelected={this._handleSearch}
                 />
-                <FlatList
-                    style={styles.itemList}
-                    data={sortedItems}
-                    keyExtractor={item => item.id}
-                    renderItem={this._renderItemRow}
-                    ItemSeparatorComponent={ItemRowDivider}
-                />
+                <View style={styles.itemList}>
+                    <ItemList
+                        items={sortedItems}
+                        onPressItem={this._toggleItem}
+                        shouldCrossOutItem={this._shouldCrossOutItem}
+                    />
+                </View>
             </View>
         );
     }
-}
-
-function ItemRowDivider() {
-    return <View style={styles.itemRowDivider} />;
 }
 
 const styles = StyleSheet.create({
@@ -126,41 +85,5 @@ const styles = StyleSheet.create({
 
     itemList: {
         flex: 1,
-        paddingBottom: 16,
-    },
-
-    itemRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        minHeight: 72,
-        paddingLeft: CONTAINER_PADDING,
-        paddingRight: CONTAINER_PADDING,
-    },
-
-    itemInfo: {
-        ...material.body1Object,
-        color: materialColors.blackSecondary,
-    },
-
-    unwornItemName: {
-        color: materialColors.blackTertiary,
-        textDecorationLine: "line-through",
-    },
-
-    unwornItemInfo: {
-        color: materialColors.blackTertiary,
-        textDecorationLine: "line-through",
-    },
-
-    itemRowDivider: {
-        marginLeft: TEXT_STARTS_AT,
-        borderBottomWidth: 1,
-        borderBottomColor: "rgba(0, 0, 0, .12)",
-    },
-
-    thumbnail: {
-        height: THUMBNAIL_SIZE,
-        width: THUMBNAIL_SIZE,
-        marginRight: THUMBNAIL_RIGHT_MARGIN,
     },
 });
