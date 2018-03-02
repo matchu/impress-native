@@ -17,14 +17,14 @@ export default class ClosetMain extends React.PureComponent {
     };
 
     _shouldCrossOutItem = item => {
-        return !this.props.wornItemIds.includes(item.id);
+        return this.props.closetRecords[item.id] === "not-wearing";
     };
 
     _toggleItem = item => {
-        if (this.props.wornItemIds.includes(item.id)) {
-            this.props.unwearItem(item);
+        if (this.props.closetRecords[item.id] === "not-wearing") {
+            this.props.onWearItem(item);
         } else {
-            this.props.wearItem(item);
+            this.props.onUnwearItem(item);
         }
     };
 

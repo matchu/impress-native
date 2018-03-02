@@ -19,6 +19,11 @@ import { TEXT_STARTS_AT } from "./util";
 export default class ClosetSearch extends React.PureComponent {
     state = { query: "" };
 
+    _addItemAndExit = item => {
+        this.props.onWearItem(item);
+        this.props.onExit();
+    };
+
     _handleExit = () => {
         this.props.onExit();
     };
@@ -58,6 +63,7 @@ export default class ClosetSearch extends React.PureComponent {
                             // TODO: We're auto-including "fitting" in the query, and
                             //     hardcoding the pet type.
                             query={this.state.query + " fits:blue-zafara"}
+                            onPressItem={this._addItemAndExit}
                         />
                     )}
                 </View>
@@ -66,7 +72,7 @@ export default class ClosetSearch extends React.PureComponent {
     }
 }
 
-function ClosetSearchResults({ data, query }) {
+function ClosetSearchResults({ data, onPressItem }) {
     if (data.loading) {
         return (
             <ActivityIndicator
@@ -76,7 +82,7 @@ function ClosetSearchResults({ data, query }) {
         );
     }
 
-    return <ItemList items={data.itemSearch} />;
+    return <ItemList items={data.itemSearch} onPressItem={onPressItem} />;
 }
 // TODO: Extract fragment for the item list's data?
 const ItemsForClosetSearch = gql`

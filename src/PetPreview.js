@@ -5,7 +5,7 @@ import { BIOLOGY_ASSETS } from "./hardcoded-data";
 
 export default class PetPreview extends React.PureComponent {
     render() {
-        const { data, wornItemIds } = this.props;
+        const { closetRecords, data } = this.props;
 
         if (data.loading) {
             return (
@@ -19,7 +19,7 @@ export default class PetPreview extends React.PureComponent {
 
         const assets = [...BIOLOGY_ASSETS];
         for (const item of items) {
-            if (wornItemIds.includes(item.id)) {
+            if (closetRecords[item.id] === "wearing") {
                 assets.push(...item.swfAssets);
             }
         }

@@ -7,64 +7,73 @@ import { DEFAULT_ITEM_IDS, BODY_ID } from "./hardcoded-data";
 import Closet from "./closet/Closet";
 import PetPreview from "./PetPreview";
 
-class Wardrobe extends React.PureComponent {
-    state = { wornItemIds: DEFAULT_ITEM_IDS };
+export default class Wardrobe extends React.PureComponent {
+    constructor(props) {
+        super(props);
+
+        const closetRecords = {};
+        for (const itemId of DEFAULT_ITEM_IDS) {
+            closetRecords[itemId] = "wearing";
+        }
+
+        this.state = { closetRecords };
+    }
 
     _handleWearItem = item => {
-        this.setState(({ wornItemIds }) => ({
-            wornItemIds: wornItemIds.concat([item.id]),
+        this.setState(({ closetRecords }) => ({
+            closetRecords: {
+                ...closetRecords,
+                [item.id]: "wearing",
+            },
         }));
     };
 
     _handleUnwearItem = item => {
-        this.setState(({ wornItemIds }) => ({
-            wornItemIds: wornItemIds.filter(id => id !== item.id),
+        this.setState(({ closetRecords }) => ({
+            closetRecords: {
+                ...closetRecords,
+                [item.id]: "not-wearing",
+            },
         }));
     };
 
     render() {
-        const { wornItemIds } = this.state;
-
         return (
-            <View style={styles.container}>
-                <View style={styles.petPreview}>
-                    <PetPreview
-                        data={this.props.data}
-                        wornItemIds={wornItemIds}
-                    />
-                </View>
-                <View style={styles.closet}>
-                    <Closet
-                        bodyId={BODY_ID}
-                        data={this.props.data}
-                        wornItemIds={wornItemIds}
-                        wearItem={this._handleWearItem}
-                        unwearItem={this._handleUnwearItem}
-                    />
-                </View>
-            </View>
+            <WardrobeView
+                closetRecords={this.state.closetRecords}
+                onAddItem={this._handleWearItem}
+                wearItem={this._handleWearItem}
+                unwearItem={this._handleUnwearItem}
+            />
         );
     }
 }
 
-const styles = StyleSheet.create({
-    container: {
-        backgroundColor: "#212121",
-        flex: 1,
-        alignItems: "stretch",
-        paddingTop: StatusBar.currentHeight,
-    },
-
-    petPreview: {
-        height: 300,
-    },
-
-    closet: {
-        backgroundColor: "white",
-        flex: 1,
-    },
-});
-
+function WardrobeView({
+    data,
+    closetRecords,
+    onAddItem,
+    wearItem,
+    unwearItem,
+}) {
+    return (
+        <View style={styles.container}>
+            <View style={styles.petPreview}>
+                <PetPreview data={data} closetRecords={closetRecords} />
+            </View>
+            <View style={styles.closet}>
+                <Closet
+                    bodyId={BODY_ID}
+                    closetRecords={closetRecords}
+                    data={data}
+                    onAddItem={onAddItem}
+                    onWearItem={wearItem}
+                    onUnwearItem={unwearItem}
+                />
+            </View>
+        </View>
+    );
+}
 const ItemsForWardrobe = gql`
     query ItemsForWardrobe($itemIds: [ID!]!, $bodyId: Int!) {
         items(ids: $itemIds) {
@@ -83,12 +92,29 @@ const ItemsForWardrobe = gql`
         }
     }
 `;
-
-export default graphql(ItemsForWardrobe, {
-    options: {
+WardrobeView = graphql(ItemsForWardrobe, {
+    options: ({ closetRecords }) => ({
         variables: {
-            itemIds: DEFAULT_ITEM_IDS,
+            itemIds: Object.keys(closetRecords),
             bodyId: BODY_ID,
         },
+    }),
+})(WardrobeView);
+
+const styles = StyleSheet.create({
+    container: {
+        backgroundColor: "#212121",
+        flex: 1,
+        alignItems: "stretch",
+        paddingTop: StatusBar.currentHeight,
     },
-})(Wardrobe);
+
+    petPreview: {
+        height: 300,
+    },
+
+    closet: {
+        backgroundColor: "white",
+        flex: 1,
+    },
+});
