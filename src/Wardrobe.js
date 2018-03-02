@@ -5,43 +5,28 @@ import gql from "graphql-tag";
 
 import { DEFAULT_ITEM_IDS, BODY_ID } from "./hardcoded-data";
 import Closet from "./closet/Closet";
+import createOutfit from "./Outfit";
 import PetPreview from "./PetPreview";
 
 export default class Wardrobe extends React.PureComponent {
-    constructor(props) {
-        super(props);
-
-        const closetRecords = {};
-        for (const itemId of DEFAULT_ITEM_IDS) {
-            closetRecords[itemId] = "wearing";
-        }
-
-        this.state = { closetRecords };
-    }
+    state = { outfit: createOutfit(DEFAULT_ITEM_IDS) };
 
     _handleWearItem = item => {
-        this.setState(({ closetRecords }) => ({
-            closetRecords: {
-                ...closetRecords,
-                [item.id]: "wearing",
-            },
+        this.setState(({ outfit }) => ({
+            outfit: outfit.wearItem(item),
         }));
     };
 
     _handleUnwearItem = item => {
-        this.setState(({ closetRecords }) => ({
-            closetRecords: {
-                ...closetRecords,
-                [item.id]: "not-wearing",
-            },
+        this.setState(({ outfit }) => ({
+            outfit: outfit.unwearItem(item),
         }));
     };
 
     render() {
         return (
             <WardrobeView
-                closetRecords={this.state.closetRecords}
-                onAddItem={this._handleWearItem}
+                outfit={this.state.outfit}
                 wearItem={this._handleWearItem}
                 unwearItem={this._handleUnwearItem}
             />
@@ -49,22 +34,16 @@ export default class Wardrobe extends React.PureComponent {
     }
 }
 
-function WardrobeView({
-    data,
-    closetRecords,
-    onAddItem,
-    wearItem,
-    unwearItem,
-}) {
+function WardrobeView({ data, outfit, onAddItem, wearItem, unwearItem }) {
     return (
         <View style={styles.container}>
             <View style={styles.petPreview}>
-                <PetPreview data={data} closetRecords={closetRecords} />
+                <PetPreview data={data} outfit={outfit} />
             </View>
             <View style={styles.closet}>
                 <Closet
                     bodyId={BODY_ID}
-                    closetRecords={closetRecords}
+                    outfit={outfit}
                     data={data}
                     onAddItem={onAddItem}
                     onWearItem={wearItem}
@@ -93,9 +72,9 @@ const ItemsForWardrobe = gql`
     }
 `;
 WardrobeView = graphql(ItemsForWardrobe, {
-    options: ({ closetRecords }) => ({
+    options: ({ outfit }) => ({
         variables: {
-            itemIds: Object.keys(closetRecords),
+            itemIds: outfit.allItemIds,
             bodyId: BODY_ID,
         },
     }),

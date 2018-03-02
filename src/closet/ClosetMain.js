@@ -17,20 +17,23 @@ export default class ClosetMain extends React.PureComponent {
     };
 
     _shouldCrossOutItem = item => {
-        return this.props.closetRecords[item.id] === "not-wearing";
+        return !this.props.outfit.isWearing(item);
     };
 
     _toggleItem = item => {
-        if (this.props.closetRecords[item.id] === "not-wearing") {
-            this.props.onWearItem(item);
-        } else {
+        if (this.props.outfit.isWearing(item)) {
             this.props.onUnwearItem(item);
+        } else {
+            this.props.onWearItem(item);
         }
     };
 
     render() {
-        const { data } = this.props;
+        const { data, outfit } = this.props;
 
+        // NOTE: This component's `items` query is based on the outfit, so it's
+        //       not necessary to check this list against the actual outfit's
+        //       closeted item IDs.
         const items = data.items || [];
 
         const sortedItems = [...items].sort((a, b) => {

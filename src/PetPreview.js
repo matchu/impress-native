@@ -1,11 +1,9 @@
 import React from "react";
 import { StyleSheet, Image, View, ActivityIndicator } from "react-native";
 
-import { BIOLOGY_ASSETS } from "./hardcoded-data";
-
 export default class PetPreview extends React.PureComponent {
     render() {
-        const { closetRecords, data } = this.props;
+        const { data, outfit } = this.props;
 
         if (data.loading) {
             return (
@@ -15,23 +13,8 @@ export default class PetPreview extends React.PureComponent {
             );
         }
 
-        const items = data.items || [];
-
-        const assets = [...BIOLOGY_ASSETS];
-        for (const item of items) {
-            if (closetRecords[item.id] === "wearing") {
-                assets.push(...item.swfAssets);
-            }
-        }
-        assets.sort((a, b) => {
-            if (a.zone.depth < b.zone.depth) {
-                return -1;
-            } else if (a.zone.depth > b.zone.depth) {
-                return 1;
-            } else {
-                return 0;
-            }
-        });
+        const itemData = data.items || [];
+        const assets = outfit.getAssets(itemData);
 
         return (
             <View style={styles.petPreview}>
