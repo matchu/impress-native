@@ -14,10 +14,10 @@ import { graphql } from "react-apollo";
 import gql from "graphql-tag";
 
 import ItemList from "./ItemList";
-import { TEXT_STARTS_AT } from "./util";
+import { TEXT_STARTS_AT, debounce } from "./util";
 
 export default class ClosetSearch extends React.PureComponent {
-    state = { query: "" };
+    state = { query: "", queryToLoad: "" };
 
     _addItemAndExit = item => {
         this.props.onWearItem(item);
@@ -28,9 +28,18 @@ export default class ClosetSearch extends React.PureComponent {
         this.props.onExit();
     };
 
-    _handleNewQuery = newQuery => {
-        this.setState({ query: newQuery });
+    _handleNewQuery = query => {
+        this.setState({ query, queryToLoad: "" });
+        this._loadQuerySoon();
     };
+
+    _loadQueryNow = () => {
+        this.setState(({ query }) => ({
+            queryToLoad: query,
+        }));
+    };
+
+    _loadQuerySoon = debounce(this._loadQueryNow, 500);
 
     render() {
         return (
@@ -39,30 +48,32 @@ export default class ClosetSearch extends React.PureComponent {
                     <View style={styles.toolbarContent}>
                         <TouchableNativeFeedback onPress={this._handleExit}>
                             <Image
-                                source={require("../../icons/back/back.png")}
-                                // TODO: This is an 18dp icon in assets :x
+                                source={require("../../icons/back/back.png")} // TODO: This is an 18dp icon in assets :x
                                 style={{ height: 24, width: 24, opacity: 0.5 }}
                             />
                         </TouchableNativeFeedback>
                         <TextInput
                             style={[material.subheading, styles.searchField]}
+                            autoCapitalize="words"
                             autoFocus
                             placeholder="Search items"
                             returnKeyType="search"
-                            selectionColor="#4CAF50" // Green 500
+                            selectionColor="#4CAF50"
                             underlineColorAndroid="transparent"
-                            value={this.state.query}
+                            value={
+                                this.state.query // Green 500
+                            }
                             onChangeText={this._handleNewQuery}
                         />
                     </View>
                 </ToolbarAndroid>
                 <View style={styles.results}>
-                    {this.state.query.length > 0 && (
+                    {this.state.queryToLoad.length > 0 && (
                         <ClosetSearchResults
                             bodyId={this.props.bodyId}
-                            // TODO: We're auto-including "fitting" in the query, and
-                            //     hardcoding the pet type.
-                            query={this.state.query + " fits:blue-zafara"}
+                            // TODO: We're auto-including "fitting" in the
+                            //       query, and hardcoding the pet type.
+                            query={this.state.queryToLoad + " fits:blue-zafara"}
                             onPressItem={this._addItemAndExit}
                         />
                     )}
