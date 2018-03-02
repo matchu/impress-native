@@ -11,9 +11,9 @@ import PetPreview from "./PetPreview";
 export default class Wardrobe extends React.PureComponent {
     state = { outfit: createOutfit(DEFAULT_ITEM_IDS) };
 
-    _handleWearItem = item => {
+    _handleWearItem = (item, itemData) => {
         this.setState(({ outfit }) => ({
-            outfit: outfit.wearItem(item),
+            outfit: outfit.wearItem(item, itemData),
         }));
     };
 
@@ -34,17 +34,17 @@ export default class Wardrobe extends React.PureComponent {
     }
 }
 
-function WardrobeView({ data, outfit, onAddItem, wearItem, unwearItem }) {
+function WardrobeView({ outfit, outfitData, onAddItem, wearItem, unwearItem }) {
     return (
         <View style={styles.container}>
             <View style={styles.petPreview}>
-                <PetPreview data={data} outfit={outfit} />
+                <PetPreview outfit={outfit} outfitData={outfitData} />
             </View>
             <View style={styles.closet}>
                 <Closet
                     bodyId={BODY_ID}
                     outfit={outfit}
-                    data={data}
+                    outfitData={outfitData}
                     onAddItem={onAddItem}
                     onWearItem={wearItem}
                     onUnwearItem={unwearItem}
@@ -53,8 +53,8 @@ function WardrobeView({ data, outfit, onAddItem, wearItem, unwearItem }) {
         </View>
     );
 }
-const ItemsForWardrobe = gql`
-    query ItemsForWardrobe($itemIds: [ID!]!, $bodyId: Int!) {
+const OutfitDataForWardrobe = gql`
+    query OutfitDataForWardrobe($itemIds: [ID!]!, $bodyId: Int!) {
         items(ids: $itemIds) {
             id
             name
@@ -64,6 +64,7 @@ const ItemsForWardrobe = gql`
                 id
                 largeImageUrl
                 zone {
+                    id
                     label
                     depth
                 }
@@ -71,7 +72,8 @@ const ItemsForWardrobe = gql`
         }
     }
 `;
-WardrobeView = graphql(ItemsForWardrobe, {
+WardrobeView = graphql(OutfitDataForWardrobe, {
+    name: "outfitData",
     options: ({ outfit }) => ({
         variables: {
             itemIds: outfit.allItemIds,

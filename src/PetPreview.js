@@ -3,9 +3,9 @@ import { StyleSheet, Image, View, ActivityIndicator } from "react-native";
 
 export default class PetPreview extends React.PureComponent {
     render() {
-        const { data, outfit } = this.props;
+        const { outfit, outfitData } = this.props;
 
-        if (data.loading) {
+        if (outfitData.loading) {
             return (
                 <View style={[styles.petPreview, styles.loading]}>
                     <ActivityIndicator size="large" color="white" />
@@ -13,8 +13,7 @@ export default class PetPreview extends React.PureComponent {
             );
         }
 
-        const itemData = data.items || [];
-        const assets = outfit.getAssets(itemData);
+        const assets = outfit.getAssets(outfitData);
 
         return (
             <View style={styles.petPreview}>

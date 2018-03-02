@@ -20,7 +20,7 @@ export default class ClosetSearch extends React.PureComponent {
     state = { query: "", queryToLoad: "" };
 
     _addItemAndExit = item => {
-        this.props.onWearItem(item);
+        this.props.onWearItem(item, this.props.outfitData);
         this.props.onExit();
     };
 
@@ -107,6 +107,7 @@ const ItemsForClosetSearch = gql`
                 id
                 largeImageUrl
                 zone {
+                    id
                     label
                     depth
                 }
