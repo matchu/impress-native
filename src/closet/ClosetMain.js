@@ -16,10 +16,6 @@ export default class ClosetMain extends React.PureComponent {
         this.props.onSearch();
     };
 
-    _shouldCrossOutItem = item => {
-        return !this.props.outfit.isWearing(item.id);
-    };
-
     _toggleItem = item => {
         if (this.props.outfit.isWearing(item.id)) {
             this.props.onUnwearItem(item.id);
@@ -64,8 +60,8 @@ export default class ClosetMain extends React.PureComponent {
                 <View style={styles.itemList}>
                     <ItemList
                         items={sortedItems}
+                        outfit={outfit}
                         onPressItem={this._toggleItem}
-                        shouldCrossOutItem={this._shouldCrossOutItem}
                     />
                 </View>
             </View>
@@ -80,7 +76,7 @@ const styles = StyleSheet.create({
     },
 
     toolbar: {
-        backgroundColor: "#388E3C",
+        backgroundColor: "#388E3C", // Green 700
         height: 56,
         elevation: 2,
         marginBottom: 8,

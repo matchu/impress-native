@@ -71,6 +71,7 @@ export default class ClosetSearch extends React.PureComponent {
                     {this.state.queryToLoad.length > 0 && (
                         <ClosetSearchResults
                             bodyId={this.props.bodyId}
+                            outfit={this.props.outfit}
                             // TODO: We're auto-including "fitting" in the
                             //       query, and hardcoding the pet type.
                             query={this.state.queryToLoad + " fits:blue-zafara"}
@@ -83,7 +84,7 @@ export default class ClosetSearch extends React.PureComponent {
     }
 }
 
-function ClosetSearchResults({ data, onPressItem }) {
+function ClosetSearchResults({ data, outfit, onPressItem }) {
     if (data.loading) {
         return (
             <ActivityIndicator
@@ -93,7 +94,13 @@ function ClosetSearchResults({ data, onPressItem }) {
         );
     }
 
-    return <ItemList items={data.itemSearch} onPressItem={onPressItem} />;
+    return (
+        <ItemList
+            items={data.itemSearch}
+            outfit={outfit}
+            onPressItem={onPressItem}
+        />
+    );
 }
 // TODO: Extract fragment for the item list's data?
 const ItemsForClosetSearch = gql`

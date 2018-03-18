@@ -19,26 +19,42 @@ import {
 export default class ItemList extends React.PureComponent {
     static defaultProps = {
         onPressItem: () => {},
-        shouldCrossOutItem: () => false,
     };
 
     _renderItemRow = ({ item }) => {
-        const shouldCrossOut = this.props.shouldCrossOutItem(item);
+        const itemIsWorn = this.props.outfit.isWearing(item.id);
+
+        // HACK: If this item is a background, it probably has a full-bleed
+        //     thumbnail. In a ring, it looks better without shrinking too much.
+        const itemIsBackground = item.swfAssets.some(sa => sa.zone.id === "3");
 
         return (
             <TouchableNativeFeedback
                 onPress={() => this.props.onPressItem(item)}
             >
                 <View style={styles.itemRow}>
-                    <Image
-                        source={{ uri: item.thumbnailUrl }}
-                        style={styles.thumbnail}
-                    />
+                    <View
+                        style={[
+                            styles.thumbnailWrapper,
+                            !itemIsWorn && styles.unwornThumbnailWrapper,
+                        ]}
+                    >
+                        <Image
+                            source={{ uri: item.thumbnailUrl }}
+                            style={[
+                                itemIsWorn && styles.wornThumbnail,
+                                !itemIsWorn && styles.unwornThumbnail,
+                                !itemIsWorn &&
+                                    itemIsBackground &&
+                                    styles.unwornBackgroundThumbnail,
+                            ]}
+                        />
+                    </View>
                     <View>
                         <Text
                             style={[
                                 material.subheading,
-                                shouldCrossOut && styles.crossedOutItemName,
+                                !itemIsWorn && styles.unwornItemName,
                             ]}
                         >
                             {item.name}
@@ -47,7 +63,7 @@ export default class ItemList extends React.PureComponent {
                             <Text
                                 style={[
                                     styles.itemInfo,
-                                    shouldCrossOut && styles.crossedOutItemInfo,
+                                    !itemIsWorn && styles.unwornItemInfo,
                                 ]}
                             >
                                 {item.swfAssets[0].zone.label}
@@ -76,6 +92,9 @@ function ItemRowDivider() {
     return <View style={styles.itemRowDivider} />;
 }
 
+const RING_WIDTH = 2;
+const RINGED_THUMBNAIL_SIZE = 32;
+
 const styles = StyleSheet.create({
     itemList: {
         paddingBottom: 16,
@@ -89,19 +108,17 @@ const styles = StyleSheet.create({
         paddingRight: CONTAINER_PADDING,
     },
 
+    unwornItemName: {
+        color: materialColors.blackSecondary,
+    },
+
     itemInfo: {
         ...material.body1Object,
         color: materialColors.blackSecondary,
     },
 
-    crossedOutItemName: {
+    unwornItemInfo: {
         color: materialColors.blackTertiary,
-        textDecorationLine: "line-through",
-    },
-
-    crossedOutItemInfo: {
-        color: materialColors.blackTertiary,
-        textDecorationLine: "line-through",
     },
 
     itemRowDivider: {
@@ -110,9 +127,36 @@ const styles = StyleSheet.create({
         borderBottomColor: "rgba(0, 0, 0, .12)",
     },
 
-    thumbnail: {
+    thumbnailWrapper: {
         height: THUMBNAIL_SIZE,
         width: THUMBNAIL_SIZE,
         marginRight: THUMBNAIL_RIGHT_MARGIN,
+
+        alignItems: "center",
+        justifyContent: "center",
+    },
+
+    unwornThumbnailWrapper: {
+        backgroundColor: "white",
+        borderRadius: THUMBNAIL_SIZE,
+        borderWidth: RING_WIDTH,
+        borderColor: "#E0E0E0", // Gray 300
+        overflow: "hidden",
+    },
+
+    wornThumbnail: {
+        height: THUMBNAIL_SIZE,
+        width: THUMBNAIL_SIZE,
+    },
+
+    unwornThumbnail: {
+        height: RINGED_THUMBNAIL_SIZE,
+        width: RINGED_THUMBNAIL_SIZE,
+        opacity: 0.8,
+    },
+
+    unwornBackgroundThumbnail: {
+        height: THUMBNAIL_SIZE - RING_WIDTH,
+        width: THUMBNAIL_SIZE - RING_WIDTH,
     },
 });
