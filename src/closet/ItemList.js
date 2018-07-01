@@ -59,7 +59,7 @@ export default class ItemList extends React.PureComponent {
                         >
                             {item.name}
                         </Text>
-                        {item.swfAssets.length && (
+                        {item.swfAssets.length > 0 && (
                             <Text
                                 style={[
                                     styles.itemInfo,

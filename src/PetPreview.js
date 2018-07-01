@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Image, View, ActivityIndicator } from "react-native";
+import { StyleSheet, Image, View, Text, ActivityIndicator } from "react-native";
 
 export default class PetPreview extends React.PureComponent {
     render() {
@@ -9,6 +9,14 @@ export default class PetPreview extends React.PureComponent {
             return (
                 <View style={[styles.petPreview, styles.loading]}>
                     <ActivityIndicator size="large" color="white" />
+                </View>
+            );
+        }
+
+        if (outfitData.error) {
+            return (
+                <View style={[styles.petPreview]}>
+                    <Text style={[styles.error]}>Error loading images</Text>
                 </View>
             );
         }
@@ -39,6 +47,11 @@ const styles = StyleSheet.create({
     loading: {
         alignItems: "center",
         justifyContent: "center",
+    },
+
+    error: {
+        color: "white",
+        textAlign: "center",
     },
 
     petPreviewLayer: {
